@@ -1,3 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaf Verification Center</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- RESET & ROOT VARIABLES --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        :root {
+            --bg-dark: #0d1117;
+            --card-bg: rgba(22, 27, 34, 0.8);
+            --border-color: rgba(48, 54, 61, 0.6);
+            --accent-green: #2ecc71;
+            --accent-hover: #1f8b4c;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+        }
+
+        /* --- BODY STYLING --- */
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(46, 204, 113, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(31, 139, 76, 0.05) 0px, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* --- NAVIGATION HEADER --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(13, 17, 23, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+            text-decoration: none;
+        }
+
+        .logo i {
+            color: var(--accent-green);
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* --- MAIN CONTENT & CONTAINERS --- */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .page {
+            display: none; 
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .page.active-page {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- TYPOGRAPHY & ELEMENTS --- */
+        h1 {
+            font-size: 28px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--text-main);
+            border-left: 4px solid var(--accent-green);
+            padding-left: 10px;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        /* --- BUTTONS --- */
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px;
+            background: var(--accent-green);
+            color: #000000;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+            color: #ffffff;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        /* --- FEATURE/RULE CARDS --- */
+        .features-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        .feature-item i {
+            color: var(--accent-green);
+            font-size: 20px;
+            margin-top: 3px;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 4px;
+            font-size: 15px;
+        }
+
+        /* --- LOADING & SUCCESS ANIMATIONS --- */
+        .status-container {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .spinner {
+            font-size: 50px;
+            color: var(--accent-green);
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .success-icon {
+            font-size: 65px;
+            color: var(--accent-green);
+            margin-bottom: 20px;
+            animation: scaleUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes scaleUp {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+        }
+
+        @media (max-width: 600px) {
+            header { padding: 15px 20px; flex-direction: column; gap: 15px; }
+            .page { padding: 25px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="javascript:void(0);" class="logo" onclick="switchPage('home')">
+            <i class="fa-solid fa-leaf"></i> Leaf Community
+        </a>
+        <nav>
+            <span class="nav-link active" id="nav-home" onclick="switchPage('home')">Verify</span>
+            <span class="nav-link" id="nav-rules" onclick="switchPage('rules')">Rules</span>
+            <span class="nav-link" id="nav-about" onclick="switchPage('about')">About Us</span>
+        </nav>
+    </header>
+
+    <main>
+
+        <div id="page-home" class="page active-page">
+            <h1><i class="fa-solid fa-shield-halved"></i> Security Verification Gate</h1>
+            <p>Welcome! To keep our automated system protected from malicious activity, raiding scripts, and advertising spam, please launch the security clearance interface below.</p>
+            
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <div>
+                        <div class="feature-title">Instant Setup Access</div>
+                        <div class="feature-desc">Clearing verification grants immediate permissions to read, view, and chat inside text lounges.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button class="btn" onclick="startVerification()">
+                    <i class="fa-solid fa-bolt"></i> Complete Secure Verification Check
+                </button>
+                <button class="btn btn-secondary" onclick="switchPage('rules')">Read Server Rules First</button>
+            </div>
+        </div>
+
+        <div id="page-loading" class="page">
+            <div class="status-container">
+                <div class="spinner"><i class="fa-solid fa-circle-notch"></i></div>
+                <h2>Verifying Account Details...</h2>
+                <p>Exchanging secure authentication parameters with the server network. Please hold on a brief moment.</p>
+            </div>
+        </div>
+
+        <div id="page-success" class="page">
+            <div class="status-container">
+                <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+                <h2>Verification Successful!</h2>
+                <p>Your server profile has been validated. Your premium member roles have been assigned automatically.</p>
+                <div class="btn-container">
+                    <a href="https://discord.com/app" class="btn">
+                        <i class="fa-brands fa-discord"></i> Return to Discord
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-rules" class="page">
+            <h2><i class="fa-solid fa-gavel"></i> Community Code of Conduct</h2>
+            <p>Our filter networks and real-time protection hooks enforce structural integrity. Be sure to completely abide by these guidelines:</p>
+            
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <div>
+                        <div class="feature-title">1. No Severe Slurs or Hate Speech</div>
+                        <div class="feature-desc">Severe explicit language filters trigger automated text mute timeouts instantly upon execution.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button class="btn" onclick="switchPage('home')">Return to Verification Panel</button>
+            </div>
+        </div>
+
+        <div id="page-about" class="page">
+            <h2><i class="fa-solid fa-circle-info"></i> About Our Eco-System</h2>
+            <p>The Leaf Community network uses advanced modular architecture scripts to construct interactive server engagement environments.</p>
+            
+            <div class="btn-container">
+                <button class="btn" onclick="switchPage('home')">Back to Main Hub</button>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        &copy; 2026 Leaf Community Systems. Protected by automated verification protocols.
+    </footer>
+
+    <script>
+        function switchPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active-page');
+            });
+            // Deactivate all header navigation links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Activate chosen target page block
+            const targetPage = document.getElementById('page-' + pageId);
+            if (targetPage) targetPage.classList.add('active-page');
+            
+            const targetNav = document.getElementById('nav-' + pageId);
+            if (targetNav) targetNav.classList.add('active');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function startVerification() {
+            // Step 1: Switch immediately to processing loading spinner view
+            switchPage('loading');
+
+            // Step 2: Create a artificial delay simulation loop (2.5 seconds) to mimic API parsing
+            setTimeout(() => {
+                // Step 3: Switch to the final verified success layout view state
+                switchPage('success');
+            }, 2500); 
+        }
+    </script>
+</body>
+</html>
+
 <script>
     // Configuration: Point this to where your Python bot's web server is hosting/listening
     const BACKEND_API_URL = "http://YOUR_BOT_SERVER_IP:5000/api/verify";
