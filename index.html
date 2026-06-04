@@ -350,93 +350,62 @@
     </footer>
 
     <script>
-        function switchPage(pageId) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active-page');
-            });
-            // Deactivate all header navigation links
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
+        // Configuration: Point this to where your Python bot's web server is hosting/listening
+        // Replace 'YOUR_BOT_SERVER_IP' with your active domain or public endpoint address.
+        const BACKEND_API_URL = "http://YOUR_BOT_SERVER_IP:5000/api/verify";
+        
+        // This updated URL contains requested scope criteria to query server configurations via OAuth2
+        const OAUTH_LINK = "https://discord.com/oauth2/authorize?client_id=1505350098551570492&response_type=code&redirect_uri=https%3A%2F%2Findex-html-blue-psi-63.vercel.app%2F&scope=identify%20guilds";
 
-            // Activate chosen target page block
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active-page'));
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+
             const targetPage = document.getElementById('page-' + pageId);
             if (targetPage) targetPage.classList.add('active-page');
             
             const targetNav = document.getElementById('nav-' + pageId);
             if (targetNav) targetNav.classList.add('active');
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function startVerification() {
-            // Step 1: Switch immediately to processing loading spinner view
-            switchPage('loading');
-
-            // Step 2: Create a artificial delay simulation loop (2.5 seconds) to mimic API parsing
-            setTimeout(() => {
-                // Step 3: Switch to the final verified success layout view state
-                switchPage('success');
-            }, 2500); 
+            // Redirect the user directly to Discord's official login portal with the updated scopes
+            window.location.href = OAUTH_LINK;
         }
+
+        // Automatically execute when the webpage loads
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+
+            // If the URL contains '?code=...', processing begins
+            if (code) {
+                switchPage('loading');
+
+                // Send the generated token identifier securely to your backend infrastructure
+                fetch(BACKEND_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code: code })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        switchPage('success');
+                    } else {
+                        alert("Verification Failed: " + data.error);
+                        switchPage('home');
+                    }
+                })
+                .catch(error => {
+                    console.error("Error connecting to backend:", error);
+                    alert("Could not connect to the verification backend server.");
+                    switchPage('home');
+                });
+            }
+        });
     </script>
 </body>
 </html>
-
-<script>
-    // Configuration: Point this to where your Python bot's web server is hosting/listening
-    const BACKEND_API_URL = "http://YOUR_BOT_SERVER_IP:5000/api/verify";
-    // Replace this with your actual Discord OAuth2 Link (WITHOUT the 'bot' or 'permissions' scopes)
-    const OAUTH_LINK = "https://discord.com/oauth2/authorize?client_id=1505350098551570492&response_type=code&redirect_uri=https%3A%2F%2Findex-html-blue-psi-63.vercel.app%2F&scope=identify";
-
-    function switchPage(pageId) {
-        document.querySelectorAll('.page').forEach(page => page.classList.remove('active-page'));
-        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-
-        const targetPage = document.getElementById('page-' + pageId);
-        if (targetPage) targetPage.classList.add('active-page');
-        
-        const targetNav = document.getElementById('nav-' + pageId);
-        if (targetNav) targetNav.classList.add('active');
-    }
-
-    function startVerification() {
-        // Redirect the user directly to Discord's official secure login portal
-        window.location.href = OAUTH_LINK;
-    }
-
-    // Automatically execute when the webpage loads
-    window.addEventListener('DOMContentLoaded', () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-
-        // If the URL contains '?code=...', it means the user just logged in via Discord
-        if (code) {
-            switchPage('loading');
-
-            // Send the code securely to your Python background bot
-            fetch(BACKEND_API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ code: code })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    switchPage('success');
-                } else {
-                    alert("Verification Failed: " + data.error);
-                    switchPage('home');
-                }
-            })
-            .catch(error => {
-                console.error("Error connecting to backend:", error);
-                alert("Could not connect to the verification backend server.");
-                switchPage('home');
-            });
-        }
-    });
-</script>
